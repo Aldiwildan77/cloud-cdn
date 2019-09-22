@@ -5,13 +5,13 @@ const uuid = require('uuid/v4');
 const mime = require('mime-types');
 
 const app = express();
-const { PROJECTID, BUCKET } = require('./config');
+const { PROJECT_ID, BUCKET } = require('./config');
 
 app.post('/upload', multer().single('image'), (req, res, next) => {
   const type = mime.lookup(req.file.originalname);
 
   const storage = new Storage({
-    projectId: PROJECTID,
+    projectId: PROJECT_ID,
     keyFilename: './google.json'
   });
 
@@ -21,7 +21,8 @@ app.post('/upload', multer().single('image'), (req, res, next) => {
   const stream = blob.createWriteStream({
     resumable: true,
     contentType: type,
-    predefinedAcl: 'publicRead'
+    predefinedAcl: 'publicRead',
+    public: true
   });
 
   stream.on('error', err => {
